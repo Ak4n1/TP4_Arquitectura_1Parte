@@ -23,6 +23,14 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     boolean existsByIdentificationNumber(String identificationNumber);
 
     /**
+     * Busca una cuenta por su número identificatorio.
+     * 
+     * @param identificationNumber Número identificatorio de la cuenta
+     * @return Optional con la cuenta encontrada o vacío si no existe
+     */
+    java.util.Optional<Account> findByIdentificationNumber(String identificationNumber);
+
+    /**
      * Obtiene todas las cuentas activas (no anuladas).
      * 
      * @return Lista de cuentas activas

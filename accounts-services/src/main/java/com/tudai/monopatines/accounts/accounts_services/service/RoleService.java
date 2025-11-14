@@ -6,6 +6,7 @@ import com.tudai.monopatines.accounts.accounts_services.entity.UserRole;
 import com.tudai.monopatines.accounts.accounts_services.repository.RoleRepository;
 import com.tudai.monopatines.accounts.accounts_services.repository.UserRepository;
 import com.tudai.monopatines.accounts.accounts_services.repository.UserRoleRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,24 +22,14 @@ import java.util.Optional;
 @Transactional
 public class RoleService {
 
-    private final RoleRepository roleRepository;
-    private final UserRepository userRepository;
-    private final UserRoleRepository userRoleRepository;
-
-    /**
-     * Constructor del servicio.
-     * 
-     * @param roleRepository Repositorio para acceder a la base de datos de roles
-     * @param userRepository Repositorio para acceder a la base de datos de usuarios
-     * @param userRoleRepository Repositorio para acceder a la tabla de relaciones usuario-rol
-     */
-    public RoleService(RoleRepository roleRepository,
-                       UserRepository userRepository,
-                       UserRoleRepository userRoleRepository) {
-        this.roleRepository = roleRepository;
-        this.userRepository = userRepository;
-        this.userRoleRepository = userRoleRepository;
-    }
+    @Autowired
+    private RoleRepository roleRepository;
+    
+    @Autowired
+    private UserRepository userRepository;
+    
+    @Autowired
+    private UserRoleRepository userRoleRepository;
 
     /**
      * Obtiene todos los roles asignados a un usuario.
@@ -70,10 +61,11 @@ public class RoleService {
      * Asigna un rol a un usuario.
      * 
      * Crea una relación entre el usuario y el rol especificado.
-     * Si el rol no existe, lo crea primero.
+     * El rol debe existir previamente en el sistema.
      * 
      * @param userId ID del usuario
      * @param roleName Nombre del rol (ej: "ROLE_USER", "ROLE_ADMIN")
+     * @throws RuntimeException si el usuario no existe o si el rol no existe
      */
     public void assignRoleToUser(Long userId, String roleName) {
         Optional<User> userOptional = userRepository.findById(userId);
@@ -83,13 +75,10 @@ public class RoleService {
         User user = userOptional.get();
 
         Optional<Role> roleOptional = roleRepository.findByName(roleName);
-        Role role;
         if (roleOptional.isEmpty()) {
-            role = new Role(roleName);
-            role = roleRepository.save(role);
-        } else {
-            role = roleOptional.get();
+            throw new RuntimeException("Role not found with name: " + roleName);
         }
+        Role role = roleOptional.get();
 
         // Verificar si ya existe la asignación
         if (!userRoleRepository.existsByUserAndRole(user, role)) {
@@ -140,4 +129,3 @@ public class RoleService {
         return roleRepository.save(role);
     }
 }
-

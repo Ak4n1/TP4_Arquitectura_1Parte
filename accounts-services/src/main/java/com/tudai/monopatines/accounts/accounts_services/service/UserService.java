@@ -58,13 +58,5 @@ public interface UserService {
      * @throws UserAlreadyExistsException si el nuevo email ya existe
      */
     UserResponse updateUser(Long id, UpdateUserRequest request);
-
-    /**
-     * Elimina un usuario del sistema.
-     * 
-     * @param id ID del usuario a eliminar
-     * @throws UserNotFoundException si no se encuentra el usuario
-     */
-    void deleteUser(Long id);
 }
 

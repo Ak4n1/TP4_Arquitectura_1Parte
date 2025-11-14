@@ -8,3 +8,7 @@
 *.tmp
 *.log
 
+# Configuración de IDE
+.vscode/
+.idea/
+

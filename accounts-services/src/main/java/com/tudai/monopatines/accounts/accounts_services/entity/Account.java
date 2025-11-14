@@ -145,6 +145,14 @@ public class Account {
         this.cancelledAt = LocalDateTime.now();
     }
 
+    /**
+     * Reactiva la cuenta, eliminando la fecha de anulación y marcándola como activa.
+     */
+    public void reactivate() {
+        this.active = true;
+        this.cancelledAt = null;
+    }
+
     @Override
     public String toString() {
         return "Account{" +

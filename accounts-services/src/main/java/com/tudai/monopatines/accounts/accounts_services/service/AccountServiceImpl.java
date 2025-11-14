@@ -2,6 +2,7 @@ package com.tudai.monopatines.accounts.accounts_services.service;
 
 import com.tudai.monopatines.accounts.accounts_services.dto.AccountRequest;
 import com.tudai.monopatines.accounts.accounts_services.dto.AccountResponse;
+import com.tudai.monopatines.accounts.accounts_services.dto.AccountStatusResponse;
 import com.tudai.monopatines.accounts.accounts_services.dto.BalanceRequest;
 import com.tudai.monopatines.accounts.accounts_services.dto.BalanceResponse;
 import com.tudai.monopatines.accounts.accounts_services.entity.Account;
@@ -11,6 +12,7 @@ import com.tudai.monopatines.accounts.accounts_services.exception.AccountNotFoun
 import com.tudai.monopatines.accounts.accounts_services.exception.InsufficientBalanceException;
 import com.tudai.monopatines.accounts.accounts_services.repository.AccountRepository;
 import com.tudai.monopatines.accounts.accounts_services.util.MapperUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,16 +29,8 @@ import java.util.Optional;
 @Transactional
 public class AccountServiceImpl implements AccountService {
 
-    private final AccountRepository accountRepository;
-
-    /**
-     * Constructor del servicio.
-     * 
-     * @param accountRepository Repositorio para acceder a la base de datos de cuentas
-     */
-    public AccountServiceImpl(AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
-    }
+    @Autowired
+    private AccountRepository accountRepository;
 
     /**
      * {@inheritDoc}
@@ -144,8 +138,8 @@ public class AccountServiceImpl implements AccountService {
     /**
      * {@inheritDoc}
      * 
-     * Implementación: Busca la cuenta, llama al método cancel() de la entidad
-     * que marca la cuenta como inactiva y establece la fecha de anulación.
+     * Implementación: Busca la cuenta y la anula o reactiva dinámicamente.
+     * Si está activa, la anula. Si está anulada, la reactiva.
      */
     @Override
     public AccountResponse cancelAccount(Long id) {
@@ -155,9 +149,15 @@ public class AccountServiceImpl implements AccountService {
         }
         Account account = accountOptional.get();
 
-        account.cancel();
-        Account cancelledAccount = accountRepository.save(account);
-        return MapperUtil.mapAccountToResponse(cancelledAccount);
+        // Toggle: si está activa, la anula; si está anulada, la reactiva
+        if (account.getActive()) {
+            account.cancel();
+        } else {
+            account.reactivate();
+        }
+        
+        Account updatedAccount = accountRepository.save(account);
+        return MapperUtil.mapAccountToResponse(updatedAccount);
     }
 
     /**
@@ -231,18 +231,18 @@ public class AccountServiceImpl implements AccountService {
     /**
      * {@inheritDoc}
      * 
-     * Implementación: Busca la cuenta y retorna el estado activo (true/false).
+     * Implementación: Busca la cuenta y retorna el estado activo junto con el ID.
      * Usado por otros microservicios para validar si una cuenta puede ser utilizada.
      */
     @Override
     @Transactional(readOnly = true)
-    public boolean isAccountActive(Long id) {
+    public AccountStatusResponse isAccountActive(Long id) {
         Optional<Account> accountOptional = accountRepository.findById(id);
         if (accountOptional.isEmpty()) {
             throw new AccountNotFoundException(id);
         }
         Account account = accountOptional.get();
-        return account.getActive();
+        return new AccountStatusResponse(account.getId(), account.getActive());
     }
 
     /**

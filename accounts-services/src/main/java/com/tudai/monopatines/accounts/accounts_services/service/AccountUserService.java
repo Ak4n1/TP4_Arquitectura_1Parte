@@ -14,6 +14,7 @@ import com.tudai.monopatines.accounts.accounts_services.repository.AccountReposi
 import com.tudai.monopatines.accounts.accounts_services.repository.AccountUserRepository;
 import com.tudai.monopatines.accounts.accounts_services.repository.UserRepository;
 import com.tudai.monopatines.accounts.accounts_services.util.MapperUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,28 +32,17 @@ import java.util.Optional;
 @Transactional
 public class AccountUserService {
 
-    private final AccountUserRepository accountUserRepository;
-    private final AccountRepository accountRepository;
-    private final UserRepository userRepository;
-    private final RoleService roleService;
-
-    /**
-     * Constructor del servicio.
-     * 
-     * @param accountUserRepository Repositorio para acceder a la tabla de relaciones cuenta-usuario
-     * @param accountRepository Repositorio para acceder a la base de datos de cuentas
-     * @param userRepository Repositorio para acceder a la base de datos de usuarios
-     * @param roleService Servicio para gestionar roles
-     */
-    public AccountUserService(AccountUserRepository accountUserRepository,
-                              AccountRepository accountRepository,
-                              UserRepository userRepository,
-                              RoleService roleService) {
-        this.accountUserRepository = accountUserRepository;
-        this.accountRepository = accountRepository;
-        this.userRepository = userRepository;
-        this.roleService = roleService;
-    }
+    @Autowired
+    private AccountUserRepository accountUserRepository;
+    
+    @Autowired
+    private AccountRepository accountRepository;
+    
+    @Autowired
+    private UserRepository userRepository;
+    
+    @Autowired
+    private RoleService roleService;
 
     /**
      * Asocia un usuario a una cuenta.

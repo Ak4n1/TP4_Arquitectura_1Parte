@@ -2,12 +2,14 @@ package com.tudai.monopatines.accounts.accounts_services.controller;
 
 import com.tudai.monopatines.accounts.accounts_services.dto.AccountRequest;
 import com.tudai.monopatines.accounts.accounts_services.dto.AccountResponse;
+import com.tudai.monopatines.accounts.accounts_services.dto.AccountStatusResponse;
 import com.tudai.monopatines.accounts.accounts_services.dto.BalanceRequest;
 import com.tudai.monopatines.accounts.accounts_services.dto.BalanceResponse;
 import com.tudai.monopatines.accounts.accounts_services.service.AccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,16 +21,12 @@ import java.util.List;
 @Tag(name = "Accounts", description = "API para gestionar cuentas del sistema")
 public class AccountController {
 
-    private final AccountService accountService;
-
-    public AccountController(AccountService accountService) {
-        this.accountService = accountService;
-    }
+    @Autowired
+    private AccountService accountService;
 
     @Operation(
         summary = "Crear cuenta",
-        description = "Crea una nueva cuenta asociada a una cuenta de Mercado Pago. " +
-                "Roles requeridos: PUBLICO (no requiere autenticacion)."
+        description = "Crea una nueva cuenta asociada a una cuenta de Mercado Pago."
     )
     @PostMapping
     public ResponseEntity<AccountResponse> createAccount(
@@ -39,8 +37,7 @@ public class AccountController {
 
     @Operation(
         summary = "Obtener cuenta por ID",
-        description = "Obtiene los datos de una cuenta por su identificador unico. " +
-                "Roles requeridos: ROLE_USER, ROLE_ADMIN."
+        description = "Obtiene los datos de una cuenta por su identificador unico."
     )
     @GetMapping("/{id}")
     public ResponseEntity<AccountResponse> getAccountById(@PathVariable Long id) {
@@ -50,8 +47,7 @@ public class AccountController {
 
     @Operation(
         summary = "Obtener todas las cuentas",
-        description = "Retorna la lista completa de cuentas del sistema. " +
-                "Roles requeridos: ROLE_ADMIN."
+        description = "Retorna la lista completa de cuentas del sistema."
     )
     @GetMapping
     public ResponseEntity<List<AccountResponse>> getAllAccounts() {
@@ -61,8 +57,7 @@ public class AccountController {
 
     @Operation(
         summary = "Obtener cuentas activas",
-        description = "Retorna unicamente las cuentas que estan activas (no anuladas). " +
-                "Roles requeridos: ROLE_ADMIN."
+        description = "Retorna unicamente las cuentas que estan activas (no anuladas)."
     )
     @GetMapping("/active")
     public ResponseEntity<List<AccountResponse>> getActiveAccounts() {
@@ -72,8 +67,7 @@ public class AccountController {
 
     @Operation(
         summary = "Actualizar cuenta",
-        description = "Actualiza los datos de una cuenta existente. " +
-                "Roles requeridos: ROLE_USER, ROLE_ADMIN."
+        description = "Actualiza los datos de una cuenta existente."
     )
     @PutMapping("/{id}")
     public ResponseEntity<AccountResponse> updateAccount(
@@ -84,11 +78,10 @@ public class AccountController {
     }
 
     @Operation(
-        summary = "Anular cuenta",
-        description = "Marca una cuenta como inactiva y establece la fecha de anulacion. Una cuenta anulada no puede ser utilizada para nuevos viajes. " +
-                "Roles requeridos: ROLE_ADMIN."
+        summary = "Anular o reactivar cuenta",
+        description = "Anula o reactiva una cuenta dinámicamente. Si la cuenta está activa, la anula. Si está anulada, la reactiva."
     )
-    @PutMapping("/{id}/cancel")
+    @PutMapping("/{id}/toggle_status")
     public ResponseEntity<AccountResponse> cancelAccount(@PathVariable Long id) {
         AccountResponse response = accountService.cancelAccount(id);
         return ResponseEntity.ok(response);
@@ -96,8 +89,7 @@ public class AccountController {
 
     @Operation(
         summary = "Cargar saldo a cuenta",
-        description = "Incrementa el saldo actual de la cuenta con el monto especificado. " +
-                "Roles requeridos: ROLE_USER, ROLE_ADMIN."
+        description = "Incrementa el saldo actual de la cuenta con el monto especificado."
     )
     @PutMapping("/{id}/balance")
     public ResponseEntity<BalanceResponse> loadBalance(
@@ -109,8 +101,7 @@ public class AccountController {
 
     @Operation(
         summary = "Obtener saldo de cuenta",
-        description = "Retorna el saldo actual de una cuenta. " +
-                "Roles requeridos: ROLE_USER, ROLE_ADMIN."
+        description = "Retorna el saldo actual de una cuenta."
     )
     @GetMapping("/{id}/balance")
     public ResponseEntity<BalanceResponse> getBalance(@PathVariable Long id) {
@@ -120,8 +111,7 @@ public class AccountController {
 
     @Operation(
         summary = "Descontar saldo de cuenta",
-        description = "Descuenta un monto del saldo de una cuenta. Se utiliza cuando se activa un monopatin o se finaliza un viaje. " +
-                "Roles requeridos: ROLE_EMPLOYEE, ROLE_ADMIN."
+        description = "Descuenta un monto del saldo de una cuenta. Se utiliza cuando se activa un monopatin o se finaliza un viaje."
     )
     @PutMapping("/{id}/balance/deduct")
     public ResponseEntity<BalanceResponse> deductBalance(
@@ -133,19 +123,17 @@ public class AccountController {
 
     @Operation(
         summary = "Verificar si cuenta esta activa",
-        description = "Retorna true si la cuenta esta activa, false si esta anulada. Usado por otros microservicios. " +
-                "Roles requeridos: ROLE_EMPLOYEE, ROLE_ADMIN."
+        description = "Retorna un JSON con el estado de la cuenta (status: true/false) y el ID de la cuenta. Usado por otros microservicios."
     )
     @GetMapping("/{id}/active")
-    public ResponseEntity<Boolean> isAccountActive(@PathVariable Long id) {
-        boolean active = accountService.isAccountActive(id);
-        return ResponseEntity.ok(active);
+    public ResponseEntity<AccountStatusResponse> isAccountActive(@PathVariable Long id) {
+        AccountStatusResponse response = accountService.isAccountActive(id);
+        return ResponseEntity.ok(response);
     }
 
     @Operation(
         summary = "Eliminar cuenta",
-        description = "Elimina una cuenta del sistema permanentemente. " +
-                "Roles requeridos: ROLE_ADMIN."
+        description = "Elimina una cuenta del sistema permanentemente."
     )
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAccount(@PathVariable Long id) {

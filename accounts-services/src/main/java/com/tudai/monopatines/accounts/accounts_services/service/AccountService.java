@@ -2,6 +2,7 @@ package com.tudai.monopatines.accounts.accounts_services.service;
 
 import com.tudai.monopatines.accounts.accounts_services.dto.AccountRequest;
 import com.tudai.monopatines.accounts.accounts_services.dto.AccountResponse;
+import com.tudai.monopatines.accounts.accounts_services.dto.AccountStatusResponse;
 import com.tudai.monopatines.accounts.accounts_services.dto.BalanceRequest;
 import com.tudai.monopatines.accounts.accounts_services.dto.BalanceResponse;
 
@@ -59,12 +60,11 @@ public interface AccountService {
     AccountResponse updateAccount(Long id, AccountRequest request);
 
     /**
-     * Anula una cuenta (requerimiento del TP).
-     * Marca la cuenta como inactiva y establece la fecha de anulación.
-     * Una cuenta anulada no puede ser utilizada para nuevos viajes.
+     * Anula o reactiva una cuenta dinámicamente.
+     * Si la cuenta está activa, la anula. Si está anulada, la reactiva.
      * 
-     * @param id ID de la cuenta a anular
-     * @return AccountResponse con la cuenta anulada
+     * @param id ID de la cuenta a anular/reactivar
+     * @return AccountResponse con la cuenta actualizada
      * @throws AccountNotFoundException si no se encuentra la cuenta
      */
     AccountResponse cancelAccount(Long id);
@@ -107,10 +107,10 @@ public interface AccountService {
      * Verifica si una cuenta está activa (para otros servicios).
      * 
      * @param id ID de la cuenta
-     * @return true si la cuenta está activa, false si está anulada
+     * @return AccountStatusResponse con el estado y el ID de la cuenta
      * @throws AccountNotFoundException si no se encuentra la cuenta
      */
-    boolean isAccountActive(Long id);
+    AccountStatusResponse isAccountActive(Long id);
 
     /**
      * Elimina una cuenta del sistema.

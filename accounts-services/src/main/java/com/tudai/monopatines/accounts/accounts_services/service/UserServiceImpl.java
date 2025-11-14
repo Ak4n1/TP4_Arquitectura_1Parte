@@ -8,6 +8,7 @@ import com.tudai.monopatines.accounts.accounts_services.exception.UserAlreadyExi
 import com.tudai.monopatines.accounts.accounts_services.exception.UserNotFoundException;
 import com.tudai.monopatines.accounts.accounts_services.repository.UserRepository;
 import com.tudai.monopatines.accounts.accounts_services.util.MapperUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,19 +25,11 @@ import java.util.Optional;
 @Transactional
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
-    private final RoleService roleService;
-
-    /**
-     * Constructor del servicio.
-     * 
-     * @param userRepository Repositorio para acceder a la base de datos de usuarios
-     * @param roleService Servicio para gestionar roles
-     */
-    public UserServiceImpl(UserRepository userRepository, RoleService roleService) {
-        this.userRepository = userRepository;
-        this.roleService = roleService;
-    }
+    @Autowired
+    private UserRepository userRepository;
+    
+    @Autowired
+    private RoleService roleService;
 
     /**
      * {@inheritDoc}
@@ -171,19 +164,6 @@ public class UserServiceImpl implements UserService {
         UserResponse response = MapperUtil.mapUserToResponse(updatedUser);
         response.setRoles(roles);
         return response;
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     * Implementación: Verifica que el usuario exista y lo elimina de la base de datos.
-     */
-    @Override
-    public void deleteUser(Long id) {
-        if (!userRepository.existsById(id)) {
-            throw new UserNotFoundException(id);
-        }
-        userRepository.deleteById(id);
     }
 
 }

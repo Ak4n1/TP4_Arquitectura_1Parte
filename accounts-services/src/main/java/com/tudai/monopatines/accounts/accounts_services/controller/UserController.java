@@ -7,6 +7,7 @@ import com.tudai.monopatines.accounts.accounts_services.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,16 +19,12 @@ import java.util.List;
 @Tag(name = "Users", description = "API para gestionar usuarios del sistema")
 public class UserController {
 
-    private final UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    @Autowired
+    private UserService userService;
 
     @Operation(
         summary = "Crear un nuevo usuario",
-        description = "Crea un nuevo usuario en el sistema. El password debe venir hasheado desde auth-service. Se asigna ROLE_USER por defecto. " +
-                "Roles requeridos: PUBLICO (no requiere autenticacion)."
+        description = "Crea un nuevo usuario en el sistema. El password debe venir hasheado desde auth-service. Se asigna ROLE_USER por defecto."
     )
     @PostMapping
     public ResponseEntity<UserResponse> createUser(
@@ -38,8 +35,7 @@ public class UserController {
 
     @Operation(
         summary = "Obtener usuario por ID",
-        description = "Obtiene los datos de un usuario incluyendo sus roles asignados. " +
-                "Roles requeridos: ROLE_USER, ROLE_ADMIN."
+        description = "Obtiene los datos de un usuario incluyendo sus roles asignados."
     )
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
@@ -49,8 +45,7 @@ public class UserController {
 
     @Operation(
         summary = "Obtener usuario por email",
-        description = "Obtiene los datos de un usuario por su email (unico en el sistema) incluyendo sus roles. " +
-                "Roles requeridos: ROLE_ADMIN."
+        description = "Obtiene los datos de un usuario por su email (unico en el sistema) incluyendo sus roles."
     )
     @GetMapping
     public ResponseEntity<UserResponse> getUserByEmail(@RequestParam String email) {
@@ -60,8 +55,7 @@ public class UserController {
 
     @Operation(
         summary = "Obtener todos los usuarios",
-        description = "Retorna la lista completa de usuarios del sistema, incluyendo sus roles asignados. " +
-                "Roles requeridos: ROLE_ADMIN."
+        description = "Retorna la lista completa de usuarios del sistema, incluyendo sus roles asignados."
     )
     @GetMapping("/all")
     public ResponseEntity<List<UserResponse>> getAllUsers() {
@@ -71,8 +65,7 @@ public class UserController {
 
     @Operation(
         summary = "Actualizar usuario",
-        description = "Actualiza los datos de un usuario existente. No incluye password (se cambia desde auth-service). " +
-                "Roles requeridos: ROLE_USER, ROLE_ADMIN."
+        description = "Actualiza los datos de un usuario existente. No incluye password (se cambia desde auth-service)."
     )
     @PutMapping("/{id}")
     public ResponseEntity<UserResponse> updateUser(
@@ -80,17 +73,6 @@ public class UserController {
         @Valid @RequestBody UpdateUserRequest request) {
         UserResponse response = userService.updateUser(id, request);
         return ResponseEntity.ok(response);
-    }
-
-    @Operation(
-        summary = "Eliminar usuario",
-        description = "Elimina un usuario del sistema permanentemente. " +
-                "Roles requeridos: ROLE_ADMIN."
-    )
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
     }
 }
 
