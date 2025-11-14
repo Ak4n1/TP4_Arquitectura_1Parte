@@ -49,5 +49,9 @@ https://tp3777.postman.co/workspace/TP4_Arquitectura_1Parte~d658834b-273a-4759-b
 
  [README de Accounts Service](accounts-services/README.md).
 
+### Diagrama de clases de entidades
 
+<div align="center">
+  <img src="screenshots/diagrama_clases.png" alt="Diagrama de Clases" />
+</div>
 

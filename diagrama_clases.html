@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagrama de Clases - Accounts Service</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            overflow: auto;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .diagram-container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+        }
+        svg {
+            border: 1px solid #ddd;
+            background-color: white;
+        }
+        .class-header {
+            fill: #4A90E2;
+            stroke: #333;
+            stroke-width: 2;
+        }
+        .class-body {
+            fill: #FFFFFF;
+            stroke: #333;
+            stroke-width: 2;
+        }
+        .class-name {
+            fill: #FFFFFF;
+            font-size: 14px;
+            font-weight: bold;
+            text-anchor: middle;
+        }
+        .attribute {
+            fill: #1976D2;
+            font-size: 12px;
+            font-family: monospace;
+        }
+        .method {
+            fill: #2E7D32;
+            font-size: 12px;
+            font-family: monospace;
+        }
+        .separator {
+            stroke: #333;
+            stroke-width: 1;
+        }
+        .relationship-line {
+            stroke: #E91E63;
+            stroke-width: 2;
+            fill: none;
+        }
+        .arrow {
+            fill: #E91E63;
+            stroke: #E91E63;
+            stroke-width: 2;
+        }
+        .multiplicity {
+            fill: #000000;
+            font-size: 12px;
+            font-weight: bold;
+            text-anchor: middle;
+        }
+    </style>
+</head>
+<body>
+    <h1>Diagrama de Clases - Accounts Service</h1>
+    <div class="diagram-container">
+        <svg width="1400" height="700" viewBox="0 0 1400 700">
+            <!-- Relaciones (dibujadas primero para que queden detrás) -->
+            
+            <!-- Account -> AccountUser -->
+            <line x1="275" y1="250" x2="360" y2="450" class="relationship-line" marker-end="url(#arrowhead)"/>
+            <text x="400" y="255" class="multiplicity">1</text>
+            <text x="480" y="520" class="multiplicity">1..*</text>
+            
+            <!-- User -> AccountUser -->
+            <line x1="675" y1="250" x2="470" y2="450" class="relationship-line" marker-end="url(#arrowhead)"/>
+            <text x="550" y="255" class="multiplicity">1</text>
+            <text x="450" y="520" class="multiplicity">1..*</text>
+            
+            <!-- User -> UserRole -->
+            <line x1="675" y1="250" x2="750" y2="450" class="relationship-line" marker-end="url(#arrowhead)"/>
+            <text x="800" y="255" class="multiplicity">1</text>
+            <text x="850" y="520" class="multiplicity">0..*</text>
+            
+            <!-- Role -> UserRole -->
+            <line x1="1050" y1="250" x2="850" y2="450" class="relationship-line" marker-end="url(#arrowhead)"/>
+            <text x="1000" y="255" class="multiplicity">1</text>
+            <text x="830" y="520" class="multiplicity">0..*</text>
+            
+            <!-- Definición de la flecha -->
+            <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                    <polygon points="0 0, 10 3, 0 6" class="arrow"/>
+                </marker>
+            </defs>
+            
+            <!-- Clase Account -->
+            <g id="account">
+                <rect x="150" y="50" width="250" height="200" class="class-body"/>
+                <rect x="150" y="50" width="250" height="30" class="class-header"/>
+                <text x="275" y="70" class="class-name">Account</text>
+                <line x1="150" y1="80" x2="400" y2="80" class="separator"/>
+                <text x="160" y="100" class="attribute">- id: Long</text>
+                <text x="160" y="120" class="attribute">- identificationNumber: String</text>
+                <text x="160" y="140" class="attribute">- mercadoPagoAccountId: String</text>
+                <text x="160" y="160" class="attribute">- currentBalance: Double</text>
+                <text x="160" y="180" class="attribute">- active: Boolean</text>
+                <text x="160" y="200" class="attribute">- createdAt: LocalDateTime</text>
+                <text x="160" y="220" class="attribute">- cancelledAt: LocalDateTime</text>
+                <line x1="150" y1="230" x2="400" y2="230" class="separator"/>
+                <text x="160" y="250" class="method">+ cancel()</text>
+                <text x="160" y="270" class="method">+ reactivate()</text>
+            </g>
+            
+            <!-- Clase User -->
+            <g id="user">
+                <rect x="550" y="50" width="250" height="200" class="class-body"/>
+                <rect x="550" y="50" width="250" height="30" class="class-header"/>
+                <text x="675" y="70" class="class-name">User</text>
+                <line x1="550" y1="80" x2="800" y2="80" class="separator"/>
+                <text x="560" y="100" class="attribute">- id: Long</text>
+                <text x="560" y="120" class="attribute">- firstName: String</text>
+                <text x="560" y="140" class="attribute">- lastName: String</text>
+                <text x="560" y="160" class="attribute">- email: String</text>
+                <text x="560" y="180" class="attribute">- phoneNumber: String</text>
+                <text x="560" y="200" class="attribute">- password: String</text>
+                <text x="560" y="220" class="attribute">- createdAt: LocalDateTime</text>
+            </g>
+            
+            <!-- Clase Role -->
+            <g id="role">
+                <rect x="950" y="50" width="200" height="200" class="class-body"/>
+                <rect x="950" y="50" width="200" height="30" class="class-header"/>
+                <text x="1050" y="70" class="class-name">Role</text>
+                <line x1="950" y1="80" x2="1150" y2="80" class="separator"/>
+                <text x="960" y="100" class="attribute">- id: Long</text>
+                <text x="960" y="120" class="attribute">- name: String</text>
+                <text x="960" y="140" class="attribute">- description: String</text>
+            </g>
+            
+            <!-- Clase AccountUser -->
+            <g id="accountuser">
+                <rect x="250" y="450" width="220" height="140" class="class-body"/>
+                <rect x="250" y="450" width="220" height="30" class="class-header"/>
+                <text x="360" y="470" class="class-name">AccountUser</text>
+                <line x1="250" y1="480" x2="470" y2="480" class="separator"/>
+                <text x="260" y="500" class="attribute">- id: Long</text>
+                <text x="260" y="520" class="attribute">- account: Account</text>
+                <text x="260" y="540" class="attribute">- user: User</text>
+                <text x="260" y="560" class="attribute">- associatedAt: LocalDateTime</text>
+            </g>
+            
+            <!-- Clase UserRole -->
+            <g id="userrole">
+                <rect x="650" y="450" width="200" height="140" class="class-body"/>
+                <rect x="650" y="450" width="200" height="30" class="class-header"/>
+                <text x="750" y="470" class="class-name">UserRole</text>
+                <line x1="650" y1="480" x2="850" y2="480" class="separator"/>
+                <text x="660" y="500" class="attribute">- id: Long</text>
+                <text x="660" y="520" class="attribute">- user: User</text>
+                <text x="660" y="540" class="attribute">- role: Role</text>
+                <text x="660" y="560" class="attribute">- assignedAt: LocalDateTime</text>
+            </g>
+        </svg>
+    </div>
+</body>
+</html>

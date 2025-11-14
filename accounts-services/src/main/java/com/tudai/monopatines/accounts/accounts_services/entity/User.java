@@ -52,9 +52,7 @@ public class User {
     private String phoneNumber;
 
     /**
-     * Contraseña del usuario (hasheada con BCrypt).
-     * Se utiliza para autenticación en el auth-service.
-     * Se guarda en la base de datos pero el hasheo se maneja en auth-service.
+     * Contraseña del usuario.
      */
     @Column(name = "password")
     private String password;
