@@ -2,7 +2,7 @@
 
 ## Descripcion
 
-Microservicio encargado de gestionar las cuentas y usuarios del sistema de monopatines electricos. Permite crear, editar, eliminar y consultar cuentas y usuarios, asi como gestionar la relacion many-to-many entre cuentas y usuarios. Tambien maneja la funcionalidad de anular/reactivar cuentas cuando sea necesario. Este servicio es fundamental para el sistema ya que almacena toda la informacion de los usuarios y sus cuentas asociadas a Mercado Pago.
+Microservicio encargado de gestionar las cuentas y usuarios del sistema de monopatines electricos. Permite crear, editar y consultar cuentas y usuarios, asi como gestionar la relacion many-to-many entre cuentas y usuarios. Tambien maneja la funcionalidad de anular/reactivar cuentas cuando sea necesario. E
 
 
 ## Dependencias
@@ -103,10 +103,10 @@ Microservicio encargado de gestionar las cuentas y usuarios del sistema de monop
 ### Usuarios (Users)
 
 #### POST /api/accounts/users
-**Descripcion:** Crea un nuevo usuario del sistema. El password debe venir ya hasheado desde auth-service. Normalmente es llamado internamente por auth-service durante el registro.
-- **Body:** `CreateUserRequest` (nombre, apellido, email, telefono, password - hasheado)
+**Descripcion:** Crea un nuevo usuario del sistema.
+- **Body:** `CreateUserRequest` (nombre, apellido, email, telefono, password)
 - **Respuesta:** `UserResponse` con el usuario creado, incluyendo roles asignados (HTTP 201)
-- **Nota:** El password debe estar hasheado con BCrypt. El hasheo se realiza en auth-service antes de llamar a este endpoint. Al crear un usuario, se le asigna automaticamente el rol `ROLE_USER`.
+- **Nota:** Al crear un usuario, se le asigna automaticamente el rol `ROLE_USER`. El password se almacena tal como se envía (en la primera parte no hay validación de autenticación).
 - **Errores:** HTTP 409 si el email ya existe (el email debe ser unico)
 
 #### GET /api/accounts/users/all
@@ -126,18 +126,12 @@ Microservicio encargado de gestionar las cuentas y usuarios del sistema de monop
 - **Errores:** HTTP 404 si no se encuentra el usuario con ese email
 
 #### PUT /api/accounts/users/{id}
-**Descripcion:** Actualiza los datos de un usuario existente. No permite cambiar el password (el password se cambia desde auth-service).
+**Descripcion:** Actualiza los datos de un usuario existente.
 - **Path Variable:** `id` - ID del usuario a actualizar
 - **Body:** `UpdateUserRequest` con los datos actualizados (nombre, apellido, email, telefono - sin password)
 - **Respuesta:** `UserResponse` con el usuario actualizado, incluyendo roles asignados (HTTP 200)
-- **Nota:** Este endpoint no actualiza el password. El cambio de password se realiza desde auth-service.
+- **Nota:** Este endpoint no actualiza el password.
 - **Errores:** HTTP 404 si no se encuentra el usuario, HTTP 409 si el nuevo email ya existe
-
-#### DELETE /api/accounts/users/{id}
-**Descripcion:** Elimina un usuario del sistema.
-- **Path Variable:** `id` - ID del usuario a eliminar
-- **Respuesta:** Sin contenido (HTTP 204)
-- **Errores:** HTTP 404 si no se encuentra el usuario
 
 ### Relaciones Cuenta-Usuario (Account-User)
 
