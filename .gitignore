@@ -1,0 +1,10 @@
+# Notas y documentación del proyecto
+/notas/
+
+# Archivos de base de datos
+*.sql
+
+# Archivos temporales
+*.tmp
+*.log
+
