@@ -2,7 +2,7 @@
 
 ### Integrantes 
 
-Grupo 3: Juan Encabo & Matias Bidinos. Microservicio asignado: Usuarios y Roles.
+Grupo 3: Juan Encabo & Matias Bidinost. Microservicio asignado: Usuarios y Roles.
 
 ### Configuracion 
 El applicacion properties "TP4_Arquitectura_1Parte\accounts-services\src\main\resources\application.properties"
