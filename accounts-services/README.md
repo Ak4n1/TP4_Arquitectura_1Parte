@@ -2,7 +2,7 @@
 
 ## Descripcion
 
-Microservicio encargado de gestionar las cuentas y usuarios del sistema de monopatines electricos. Permite crear, editar y consultar cuentas y usuarios, asi como gestionar la relacion many-to-many entre cuentas y usuarios. Tambien maneja la funcionalidad de anular/reactivar cuentas cuando sea necesario. E
+Microservicio encargado de gestionar las cuentas y usuarios del sistema de monopatines electricos. Permite crear, editar y consultar cuentas y usuarios, asi como gestionar la relacion many-to-many entre cuentas y usuarios. Tambien maneja la funcionalidad de anular/reactivar cuentas cuando sea necesario. 
 
 
 ## Dependencias
